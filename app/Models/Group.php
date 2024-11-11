@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Group extends Model
 {
     use HasFactory;
+    
+    protected $fillable = [
+        'name',
+        'admin_id',
+    ];
 
     public function File():HasMany{
         return $this->hasMany(File::class);

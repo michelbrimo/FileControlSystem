@@ -13,14 +13,7 @@ class GroupController extends Controller
         $this->group_services = new GroupServices();
     }
 
-    public function create($request) {
-        try {
-            $group = $this->group_services->createGroup($request->all());
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'error' => $e->getMessage()
-            ], $e->getCode());
-        }
+    public function createGroup(Request $request) {
+        return $this->group_services->createGroup($request->all());
     }
 }

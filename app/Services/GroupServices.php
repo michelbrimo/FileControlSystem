@@ -15,37 +15,44 @@ class GroupServices extends MainService
     }
     
     public function createGroup($data){
-        $validator = Validator::make($data, [
-            'name' => 'string|required' 
-        ]);
-        
-        if ($validator->fails()) 
-            throw new ValidationException($validator);
-
-
         try {
-            $this->executeBefore(parent::$aspect_mapper['createGroup']);
+            $rules = [
+                'name' => 'required|string|unique:groups',
+            ];
 
-            $data = $this->group_repository->create($data);
-            $response = $this->response(
-                true,
-                'created successfully',
+            $this->executeBefore(
+                $this->aspect_mapper['createGroup'],
+                __FUNCTION__,
+                $rules,
                 $data
             );
-
-            $this->executeAfter(parent::$aspect_mapper['createGroup']);
             
+            $data['admin_id'] = auth()->user()->id;
+            $result = $this->group_repository->create($data);
+
+            $response = $this->response(
+                true,
+                'Group created successfully',
+                $result
+            );
+
+            $this->executeAfter(
+                $this->aspect_mapper['createGroup'],
+                __FUNCTION__
+            );            
         } catch (\Exception $e) {
-            $message = $e->getMessage();
+            $message = $e->getMessage();   
             $response = $this->response(
                 false,
                 $message
             );
             
-            $this->executeException(parent::$aspect_mapper['createGroup']);
+            $this->executeException(
+                $this->aspect_mapper['createGroup'],
+                __FUNCTION__,
+            );
         }
 
         return $response;
     }
-    
 }
