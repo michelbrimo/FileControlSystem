@@ -8,19 +8,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Files extends Model
+class File extends Model
 {
     use HasFactory;
 
-    public function Groups():BelongsTo{
-        return $this->belongsTo(Groups::class);
+    public function Group():BelongsTo{
+        return $this->belongsTo(Group::class);
     }
 
     public function History():HasMany{
         return $this->hasMany(History::class);
     }
 
-    public function FileChecks():HasMany{
-        return $this->hasMany(FileChecks::class);
+    public function FileCheck():HasMany{
+        return $this->hasMany(FileCheck::class);
     }
 }

@@ -10,8 +10,8 @@ class History extends Model
 {
     use HasFactory;
 
-    public function Files():BelongsTo{
-        return $this->belongsTo(Files::class);
+    public function File():BelongsTo{
+        return $this->belongsTo(File::class);
     }
 
     public function Users():BelongsTo{

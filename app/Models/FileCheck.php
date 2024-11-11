@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserGroups extends Model
+class FileCheck extends Model
 {
     use HasFactory;
 
@@ -14,7 +14,7 @@ class UserGroups extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function Groups():BelongsTo{
-        return $this->belongsTo(Groups::class);
+    public function File():BelongsTo{
+        return $this->belongsTo(File::class);
     }
 }

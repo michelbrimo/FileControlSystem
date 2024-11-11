@@ -45,12 +45,12 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function UserGroups():BelongsToMany{
-        return $this->BelongsToMany(UserGroups::class);
+    public function UserGroup():BelongsToMany{
+        return $this->BelongsToMany(UserGroup::class);
     }
 
-    public function FileChecks():HasMany{
-        return $this->hasMany(FileChecks::class);
+    public function FileCheck():HasMany{
+        return $this->hasMany(FileCheck::class);
     }
 
     public function History():HasMany{

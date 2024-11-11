@@ -7,16 +7,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Groups extends Model
+class Group extends Model
 {
     use HasFactory;
 
-    public function Files():HasMany{
-        return $this->hasMany(Files::class);
+    public function File():HasMany{
+        return $this->hasMany(File::class);
     }
 
-    public function UserGroups():HasMany{
-        return $this->hasMany(UserGroups::class);
+    public function UserGroup():HasMany{
+        return $this->hasMany(UserGroup::class);
     }
 
     public function Admin():HasOne{
