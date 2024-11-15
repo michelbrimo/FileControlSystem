@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Repositories\GroupRepository;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class GroupServices extends MainService
+class GroupServices
 {
     protected $group_repository;
     protected $aspect;
@@ -15,44 +16,19 @@ class GroupServices extends MainService
     }
     
     public function createGroup($data){
-        try {
-            $rules = [
-                'name' => 'required|string|unique:groups',
-            ];
+        $validator = Validator::make($data, [
+            'name' => 'required|string|unique:groups',
+        ]);
 
-            $this->executeBefore(
-                $this->aspect_mapper['createGroup'],
-                __FUNCTION__,
-                $rules,
-                $data
-            );
+        if($validator->fails()){
+            throw new Exception(
+                $validator->errors()->first(),
+                422);
+        } 
+        
             
-            $data['admin_id'] = auth()->user()->id;
-            $result = $this->group_repository->create($data);
-
-            $response = $this->response(
-                true,
-                'Group created successfully',
-                $result
-            );
-
-            $this->executeAfter(
-                $this->aspect_mapper['createGroup'],
-                __FUNCTION__
-            );            
-        } catch (\Exception $e) {
-            $message = $e->getMessage();   
-            $response = $this->response(
-                false,
-                $message
-            );
-            
-            $this->executeException(
-                $this->aspect_mapper['createGroup'],
-                __FUNCTION__,
-            );
-        }
-
-        return $response;
+        $data['admin_id'] = auth()->user()->id;
+        $result = $this->group_repository->create($data);
+        return $result;
     }
 }

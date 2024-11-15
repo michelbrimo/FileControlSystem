@@ -2,62 +2,82 @@
 
 namespace App\Services;
 
-use App\Repositories\GroupRepository;
+use Exception;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Hash;
+use App\Repositories\GroupRepository;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class UserServices extends MainService
+class UserServices
 {
     protected $user_repository;
-    protected $aspect;
+
     public function __construct() {
         $this->user_repository = new UserRepository();
     }
 
     public function createUser($data){
-        $rules = [
+        $validator = Validator::make($data, [
             'username' => 'unique:users|string|required',
             'email' => 'unique:users|email|required',
             'password' => 'string|min:8|confirmed|required',
-        ];
+        ]);
 
-        try {
-            $this->executeBefore(
-                $this->aspect_mapper['createUser'],
-                __FUNCTION__,
-                $rules,
-                $data
-            );
+        if($validator->fails()){
+            throw new Exception(
+                $validator->errors()->first(),
+                422);
+        }  
+        
+        $result = $this->user_repository->create($data);
+        $result['token'] = $result->createToken('personal access token')->plainTextToken;
+            
+        return $result;
+    }
 
-            $result = $this->user_repository->create($data);
-            $test = $result->username;
+    public function login($data) {
+        $validator = Validator::make($data, [
+            'email' => 'email|required',
+            'password' => 'string|required',
+        ]);
+
+        if($validator->fails()){
+            throw new Exception(
+                $validator->errors()->first(),
+                422);
+        } 
+           
+
+        $result = $this->user_repository->getUser_byEmail($data['email']);
+
+        if ($result && Hash::check($data['password'], $result->password)) {
             $result['token'] = $result->createToken('personal access token')->plainTextToken;
-            
-            $response = $this->response(
-                true,
-                'User created successfully',
-                $result
-            );
-
-            $this->executeAfter(
-                $this->aspect_mapper['createUser'],
-                __FUNCTION__
-            );
-
-        } catch (\Exception $e) {
-            $message = $e->getMessage();   
-            $response = $this->response(
-                false,
-                $message
-            );
-            
-            $this->executeException(
-                $this->aspect_mapper['createUser'],
-                __FUNCTION__
-            );
+            return $result;
         }
 
-        return $response;
+        else
+            throw new Exception("Email or Password are incorrect", 400);
+        
+    }
+
+    public function getUserProfile($data) {
+        $validator = Validator::make($data, [
+            'id' => 'integer|required'
+        ]);
+
+        if($validator->fails()){
+            throw new Exception(
+                $validator->errors()->first(),
+                422);
+        } 
+        
+        $result = $this->user_repository->getUser_byId($data['id']);
+
+        if ($result)
+            return $result;
+    
+        else
+            throw new Exception('User not found', 400);            
     }
 }
