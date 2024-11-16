@@ -9,6 +9,13 @@ class UserRepository{
         return User::create($data);
     }
 
+    public function getAllUsers($page){
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+        return User::skip($offset)->take($limit)->get();
+    }
+    
+
     public function getUser_byEmail($email){
         return User::where('email', '=', $email)
                    ->first();

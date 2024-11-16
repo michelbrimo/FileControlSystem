@@ -27,4 +27,8 @@ class Group extends Model
     public function Admin():HasOne{
         return $this->hasOne(User::class);
     }
+
+    public function Invitation():HasMany{
+        return $this->hasMany(Invitation::class);
+    }
 }

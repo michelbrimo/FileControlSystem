@@ -61,7 +61,13 @@ class User extends Authenticatable
         return $this->hasMany(Log::class);
     }
 
+    public function InvitationReciever():HasMany{
+        return $this->hasMany(Invitation::class);
+    }
 
+    public function InvitationSender():HasMany{
+        return $this->hasMany(Invitation::class);
+    }
 }
 
 

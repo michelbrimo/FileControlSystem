@@ -80,4 +80,24 @@ class UserServices
         else
             throw new Exception('User not found', 400);            
     }
+
+    public function viewUsers($data) {
+        $validator = Validator::make($data, [
+            'page' => 'integer|required'
+        ]);
+
+        if($validator->fails()){
+            throw new Exception(
+                $validator->errors()->first(),
+                422);
+        } 
+        
+        $result = $this->user_repository->getAllUsers($data['page']);
+
+        if ($result)
+            return $result;
+    
+        else
+            throw new Exception('User not found', 400);            
+    }
 }

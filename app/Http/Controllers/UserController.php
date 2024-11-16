@@ -48,7 +48,7 @@ class UserController extends Controller
         $currentRoute = Route::current();
         $routeName = $currentRoute->getName();
         $service_function = $this->getRouteExploded($routeName);
-        $success_message = "user's profile fetched successfully";
+        $success_message = "user's profile has been fetched successfully";
 
         return $this->service_transformer->execute(
             ['id' => auth()->user()->id],
@@ -57,5 +57,23 @@ class UserController extends Controller
             $success_message
         );    
     }
+    
+    public function viewUsers($page=1) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "users has been fetched successfully";
+
+        return $this->service_transformer->execute(
+            ['page' => $page],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
+
+    
+
+
 
 }

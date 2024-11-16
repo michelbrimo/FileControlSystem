@@ -8,9 +8,14 @@ class ServiceTransfromer{
 
     public $aspect_mapper = [
         'createUser' => ['LoggingAspect'],
-        'login' => ['LoggingAspect'],
+        'login' => [],
+        'getUserProfile' => [],
+        'viewUsers' => [],
+        'viewGroupUsers' => [],
+        'inviteUsers' => ['LoggingAspect'],
+        'acceptInvitation' => ['LoggingAspect', 'TransactionAspect'],
+        'rejectInvitation' => ['LoggingAspect', 'TransactionAspect'],
         'createGroup' => ['LoggingAspect'],
-        'getUserProfile' => ['LoggingAspect'],
     ];
 
     private $service_mapper = [];
@@ -50,9 +55,8 @@ class ServiceTransfromer{
                 $e->getMessage(),
                 $e->getCode(),
                 null,
-                
             );
-        
+            
             $this->executeException($function_name);
         }
 
