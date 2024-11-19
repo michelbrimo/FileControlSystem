@@ -16,20 +16,24 @@ class ServiceTransfromer{
         'acceptInvitation' => ['LoggingAspect', 'TransactionAspect'],
         'rejectInvitation' => ['LoggingAspect', 'TransactionAspect'],
         'createGroup' => ['LoggingAspect'],
+        'uploadFiles'=>['LoggingAspect', 'TransactionAspect', ],
     ];
 
     private $service_mapper = [];
     protected $userService;
     protected $groupService;
+    protected $fileService;
 
     public function __construct()
     {
         $this->userService = new UserServices();
         $this->groupService = new GroupServices();
+        $this->fileService = new FileServices();
 
         $this->service_mapper = [
             "Users" => "App\\Services\\UserServices",
             "Groups" => "App\\Services\\GroupServices",
+            'Files' =>"App\\Services\\FileServices"
         ];
     }
 
@@ -38,7 +42,7 @@ class ServiceTransfromer{
             $this->executeBefore($function_name);
 
             $service_obj = new $this->service_mapper[$service];
-            $result = $service_obj->$function_name($data);
+            $result = $service_obj->$function_name($data); 
 
             $response = $this->response(
                 true,
@@ -93,6 +97,9 @@ class ServiceTransfromer{
     }
 
     public function response($status, $message, $code=200, $data){
+        if (!is_int($code) || $code < 100 || $code > 599) {
+            $code = 500; // Default to Internal Server Error
+        }
         return response()->json([
             'status' => $status,
             'message' => $message,

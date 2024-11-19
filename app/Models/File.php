@@ -12,6 +12,15 @@ class File extends Model
 {
     use HasFactory;
 
+    
+    protected $fillable = [
+        'file_name',
+        'file_path',
+        'state',
+        'group_id',
+    ];
+
+    
     public function Group():BelongsTo{
         return $this->belongsTo(Group::class);
     }
