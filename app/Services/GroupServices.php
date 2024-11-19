@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Exception;
+use App\Models\Group;
+use Illuminate\Support\Facades\Gate;
 use App\Repositories\GroupRepository;
 use Illuminate\Support\Facades\Validator;
 
@@ -48,9 +50,12 @@ class GroupServices
                 422);
         } 
 
-        $group_id = $this->group_repository->getGroup_byName($data['group_name'])->id;
+        $group = $this->group_repository->getGroup_byName($data['group_name']);
+        
+        Gate::authorize('groupAdminPermissions', [Group::class, $group]);
+
         $data['admin_id'] = auth()->user()->id;
-        $data['group_id'] = $group_id;
+        $data['group_id'] = $group->id;
 
         $fixed_part = [
             'admin_id' => $data['admin_id'],
@@ -61,7 +66,7 @@ class GroupServices
         
         foreach ($data['users_id'] as $user_id){
             $invitation = $this->group_repository->getInvitation_byGroupAndUser($fixed_part['group_id'],  $user_id);
-            $is_member = $this->group_repository->getMember($user_id, $group_id);
+            $is_member = $this->group_repository->getMember($user_id, $group->id);
             if (!$invitation && !$is_member) 
                 array_push(
                     $result,
