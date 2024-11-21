@@ -112,5 +112,88 @@ class FileServices
             ]); 
         
     }
+
+
+    public static function compareFiles(string $oldFilePath, string $newFilePath)
+    {
+        
+        if (!file_exists($oldFilePath) || !file_exists($newFilePath)) {
+            throw new \Exception("One or both files do not exist.");
+        }
+
+        $oldLines = file($oldFilePath, FILE_IGNORE_NEW_LINES);
+        $newLines = file($newFilePath, FILE_IGNORE_NEW_LINES);
+
+        $diff = [];
+        $maxLines = max(count($oldLines), count($newLines));
+
+        for ($i = 0; $i < $maxLines; $i++) {
+            $oldLine = $oldLines[$i] ?? null;
+            $newLine = $newLines[$i] ?? null;
+
+            if (is_null($oldLine)) {
+                $diff[] = [
+                    'type' => 'added',
+                    'line' => $i + 1,
+                    'content' => $newLine,
+                ];
+            }
+            elseif (is_null($newLine)) {
+                $diff[] = [
+                    'type' => 'removed',
+                    'line' => $i + 1,
+                    'content' => $oldLine,
+                ];
+            }
+            elseif ($oldLine !== $newLine) {
+                $diff[] = [
+                    'type' => 'modified',
+                    'line' => $i + 1,
+                    'old_content' => $oldLine,
+                    'new_content' => $newLine,
+                    'changes' => self::highlightChanges($oldLine, $newLine),
+                ];
+            }
+        }
+
+        if (empty($diff)) {
+            return [
+                'message' => 'No changes detected between the files.',
+                'diff' => []
+            ];
+        }
+
+        return $diff;
+
+    }
+
+    private static function highlightChanges(string $oldLine, string $newLine)
+    {
+        $oldWords = explode(' ', $oldLine);
+        $newWords = explode(' ', $newLine);
+
+        $diffOld = [];
+        $diffNew = [];
+
+        $maxWords = max(count($oldWords), count($newWords));
+        for ($i = 0; $i < $maxWords; $i++) {
+            $oldWord = $oldWords[$i] ?? '';
+            $newWord = $newWords[$i] ?? '';
+
+            if ($oldWord !== $newWord) {
+                $diffOld[] = "**$oldWord**";
+                $diffNew[] = "**$newWord**";
+            } else {
+                $diffOld[] = $oldWord;
+                $diffNew[] = $newWord;
+            }
+        }
+
+        return [
+            'old_highlighted' => implode(' ', $diffOld),
+            'new_highlighted' => implode(' ', $diffNew),
+        ];
+    }
+
         
 }

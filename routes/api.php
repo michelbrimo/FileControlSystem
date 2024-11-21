@@ -23,5 +23,5 @@ Route::middleware('auth:sanctum')->group(function(){
 
     Route::post('/{group_name}/upload-file/{file_id?}', [FileController::class, 'uploadFiles'])->name('Files.uploadFiles');
 
-
 });
+Route::get('/diff',[FileController::class,'diff']);
