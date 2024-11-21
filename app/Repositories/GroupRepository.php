@@ -56,4 +56,10 @@ class GroupRepository{
         return Invitation::where('id', '=', $id)
                          ->delete();
     }
+
+    function exitGroup($user_id, $group_id) {
+        return UserGroup::where('user_id', '=', $user_id)
+                        ->where('group_id', '=', $group_id)
+                        ->delete();
+    }
 }

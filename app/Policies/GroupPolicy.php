@@ -8,10 +8,11 @@ use Illuminate\Auth\Access\Response;
 
 class GroupPolicy
 {
-    public function groupAdminPermissions(User $user, Group $group)
-    {
-        return $user->id === $group->admin_id
-        ? Response::allow()
-        : Response::denyWithStatus(false , 'You do not own this group.', 403);
-    }
+    # replaced with middle ware
+    // public function groupAdminPermissions(User $user, $original)
+    // {
+    //     // return $user->id === $group->admin_id
+    //     // ? Response::allow()
+    //     // : Response::denyWithStatus(false , 'You do not own this group.', 403);
+    // }
 }

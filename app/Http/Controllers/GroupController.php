@@ -29,12 +29,13 @@ class GroupController extends Controller
         );    
     }
 
-    public function inviteUsers(Request $request) {
+    public function inviteUsers(Request $request, $group) {
         $currentRoute = Route::current();
         $routeName = $currentRoute->getName();
         $service_function = $this->getRouteExploded($routeName);
         $success_message = 'users invited successfully';
         
+        $request['group'] = $group;
         return $this->service_transformer->execute(
             $request->all(),
             $service_function['service'],
@@ -71,17 +72,46 @@ class GroupController extends Controller
         );    
     }
 
-    public function viewGroupUsers($group_name, $page=1) {
+    public function viewGroupUsers($group, $page=1) {
         $currentRoute = Route::current();
         $routeName = $currentRoute->getName();
         $service_function = $this->getRouteExploded($routeName);
         $success_message = "group's users has been fetched successfully";
 
         return $this->service_transformer->execute(
-            ['page' => $page, 'group_name' => $group_name],
+            ['page' => $page, 'group_id' => $group->id],
             $service_function['service'],
             $service_function['function'],
             $success_message
         );    
     }
+
+    public function exitGroup($group) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "you've exited the group successfully";
+
+        return $this->service_transformer->execute(
+            ['group_id' => $group->id],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
+
+    public function kickFromGroup($group, $user) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "you kicked this user successfully";
+
+        return $this->service_transformer->execute(
+            ['group_id' => $group->id, 'user_id' => $user->id],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
+    
 }

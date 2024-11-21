@@ -20,6 +20,11 @@ class UserRepository{
         return User::where('email', '=', $email)
                    ->first();
     }
+    
+    public function getUser_byUsername($username){
+        return User::where('username', '=', $username)
+                   ->first();
+    }
 
     public function getUser_byId($id){
         return User::where('id', '=', $id)

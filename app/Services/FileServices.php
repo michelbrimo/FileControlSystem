@@ -22,7 +22,7 @@ class FileServices
     public function uploadFiles($data){
         $validator = Validator::make($data, [
             'file_path' => 'required|array', 
-            'group_name' => 'string',
+            'group_id' => 'required',
             'file_id' => 'integer'
         ]);
     
@@ -33,17 +33,13 @@ class FileServices
             );
         }
         
-        $group = $this->group_repository->getGroup_byName($data['group_name']); 
-        if (!$group) throw new Exception('Group not found.', 404);
-        
-
         $results = []; 
         foreach ($data['file_path'] as $filePath) {
             if (!file_exists($filePath)) throw new Exception($filePath." does not exist.", 404);
 
             $result = $this->processSingleFile([
                 'file_path' => $filePath,
-                'group_id' => $group->id,
+                'group_id' => $data['group_id'],
                 'file_id' => $data['file_id'] ?? null
             ]);
             $results[] = $result;
