@@ -8,7 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FileCheck extends Model
 {
+    
+
     use HasFactory;
+    
+    protected $fillable = [
+        'file_id',
+        'user_id',
+        'checks',
+    ];
 
     public function User():BelongsTo{
         return $this->belongsTo(User::class);

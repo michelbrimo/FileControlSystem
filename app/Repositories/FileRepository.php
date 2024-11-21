@@ -3,9 +3,43 @@
 namespace App\Repositories;
 
 use App\Models\File;
+use App\Models\FileCheck;
+use App\Models\History;
 
 class FileRepository{
-    public function uploadFiles($data){  
+    public function getFile_byId($file_id) {
+        return File::where('id', '=', $file_id)
+        ->first();
+    }
+    public function getFile_byName($file_name) {
+        return File::where('file_name', '=', $file_name)
+        ->first();
+    }
+
+    function createCheck($data) {
+        return FileCheck::create($data);
+    }
+
+    function getLastFileCheckIn_byId($file_id) {
+        return FileCheck::where('file_id', '=', $file_id)
+                        ->orderBy('id', 'desc')
+                        ->first();
+    }
+    
+    public function uploadNewFiles($data){  
         return File::create($data);
     }
+
+    public function uploadExistingFiles($data){  
+        return History::create($data);
+    }
+
+    public function updateFile($file_id, $data){  
+        return File::where('id', '=', $file_id)
+                   ->update($data);
+    }
+
+    
+
+    
 }

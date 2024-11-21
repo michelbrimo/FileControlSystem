@@ -10,6 +10,12 @@ class History extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'file_id',
+        'user_id',
+        'link',
+    ];
+
     public function File():BelongsTo{
         return $this->belongsTo(File::class);
     }

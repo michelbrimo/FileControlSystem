@@ -16,7 +16,7 @@ class ServiceTransfromer{
         'acceptInvitation' => ['LoggingAspect', 'TransactionAspect'],
         'rejectInvitation' => ['LoggingAspect', 'TransactionAspect'],
         'createGroup' => ['LoggingAspect'],
-        'uploadFiles'=>['LoggingAspect', 'TransactionAspect', ],
+        'uploadFiles'=>['LoggingAspect', 'TransactionAspect'],
     ];
 
     private $service_mapper = [];

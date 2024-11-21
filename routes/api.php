@@ -19,9 +19,9 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/accept-invitation/{invitation_id}', [GroupController::class, 'acceptInvitation'])->name( 'Groups.acceptInvitation');
     Route::get('/reject-invitation/{invitation_id}', [GroupController::class, 'rejectInvitation'])->name( 'Groups.rejectInvitation');
 
-    Route::get('/view-users/{group_name}/{page?}', [GroupController::class, 'viewGroupUsers'])->name( 'Groups.viewGroupUsers');
+    Route::get('/{group_name}/view-users/{page?}', [GroupController::class, 'viewGroupUsers'])->name( 'Groups.viewGroupUsers');
 
-    Route::post('upload-file/{group_name}', [FileController::class, 'uploadFiles'])->name('Files.uploadFiles');
+    Route::post('/{group_name}/upload-file/{file_id?}', [FileController::class, 'uploadFiles'])->name('Files.uploadFiles');
 
 
 });
