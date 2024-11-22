@@ -130,6 +130,7 @@ class FileServices
         $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION); 
         $uniqueFileName = $nameWithoutExtension . '_' . $file->group_id;
 
+
         $check_in = $this->file_repository->getCheckIn($data['file_id']);
 
         if (!$check_in)
@@ -161,27 +162,34 @@ class FileServices
             'file_id' => $data['file_id']
         ]); 
     }
-
-
-
-
-
-
-
-
-
     
-    public static function compareFiles(string $oldFilePath, string $newFilePath)
+    public function compareFiles($data)
     {
-        
+        $validator = Validator::make($data, [
+            'old_path' => 'required|string', 
+            'new_path' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        $oldFilePath = $data['old_path'];
+        $newFilePath = $data['new_path'];
+
         if (!file_exists($oldFilePath) || !file_exists($newFilePath)) {
-            throw new \Exception("One or both files do not exist.");
+            return response()->json([
+                'success' => false,
+                'message' => "One or both files do not exist."
+            ], 400);
         }
 
         $oldLines = file($oldFilePath, FILE_IGNORE_NEW_LINES);
         $newLines = file($newFilePath, FILE_IGNORE_NEW_LINES);
 
-        $diff = [];
+        $diffrence = [];
         $maxLines = max(count($oldLines), count($newLines));
 
         for ($i = 0; $i < $maxLines; $i++) {
@@ -189,39 +197,40 @@ class FileServices
             $newLine = $newLines[$i] ?? null;
 
             if (is_null($oldLine)) {
-                $diff[] = [
+                $diffrence[] = [
                     'type' => 'added',
                     'line' => $i + 1,
                     'content' => $newLine,
                 ];
-            }
-            elseif (is_null($newLine)) {
-                $diff[] = [
+            } elseif (is_null($newLine)) {
+                $diffrence[] = [
                     'type' => 'removed',
                     'line' => $i + 1,
                     'content' => $oldLine,
                 ];
-            }
-            elseif ($oldLine !== $newLine) {
-                $diff[] = [
+            } elseif ($oldLine !== $newLine) {
+                $diffrence[] = [
                     'type' => 'modified',
                     'line' => $i + 1,
                     'old_content' => $oldLine,
                     'new_content' => $newLine,
-                    'changes' => self::highlightChanges($oldLine, $newLine),
+                    'changes' => $this->highlightChanges($oldLine, $newLine),
                 ];
             }
         }
 
-        if (empty($diff)) {
-            return [
+        if (empty($diffrence)) {
+            return response()->json([
+                'success' => true,
                 'message' => 'No changes detected between the files.',
-                'diff' => []
-            ];
+                'diffrence' => []
+            ]);
         }
 
-        return $diff;
-
+        return response()->json([
+            'success' => true,
+            'diffrence' => $diffrence,
+        ]);
     }
 
     private static function highlightChanges(string $oldLine, string $newLine)

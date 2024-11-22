@@ -64,45 +64,19 @@ class FileController extends Controller
     }
 
 
-
-
-    # testing
-    public function diff(Request $request)
+    public function compareFiles(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'old_path' => 'required',
-            'new_path' => 'required',
-        ]);
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "you've compared the files successfully";
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
-
-        $old_path = $request->old_path;
-        $new_path = $request->new_path;
-
-        try {
-            $result = FileServices::compareFiles($old_path, $new_path);
-
-            if (isset($result['message'])) {
-                return response()->json([
-                    'success' => true,
-                    'message' => $result['message'],
-                    'diff' => $result['diff'],
-                ]);
-            }
-
-            return response()->json([
-                'success' => true,
-                'diff' => $result,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
-        }
+        return $this->service_transformer->execute(
+            $request->all(),
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
     }
+    
 }

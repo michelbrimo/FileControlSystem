@@ -21,6 +21,7 @@ class ServiceTransfromer{
         'kickFromGroup' => [],
         'checkIn' => ["TransactionAspect"],
         'checkOut' => [],
+        'compareFiles'=>[],
 
     ];
 

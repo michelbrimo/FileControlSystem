@@ -11,6 +11,8 @@ use App\Models\Group;
 
 Route::post('/register', [UserController::class, 'register'])->name('Users.createUser');
 Route::post('/login', [UserController::class, 'login'])->name('Users.login');
+Route::get('/compare-files',[FileController::class,'compareFiles'])->name('Files.compareFiles');
+
 
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/my-profile', [UserController::class, 'myProfile'])->name('Users.getUserProfile');
@@ -30,8 +32,6 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::get('/{group_name}/exit-group', [GroupController::class, 'exitGroup'])->name( 'Groups.exitGroup');
         Route::post('/{group_name}/check-in', [FileController::class, 'checkIn'])->name('Files.checkIn');
         Route::post('/{group_name}/check-out/{file_id}', [FileController::class, 'checkOut'])->name('Files.checkOut');
-
     });
     
 });
-Route::get('/diff',[FileController::class,'diff']);
