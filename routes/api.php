@@ -1,12 +1,9 @@
 <?php
 
 use App\Http\Controllers\FileController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
-use App\Models\Group;
-
 
 
 Route::post('/register', [UserController::class, 'register'])->name('Users.createUser');
@@ -27,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function(){
     });
 
     Route::middleware('GroupMember')->group(function (){
-        Route::get('/{group_name}/view-users/{page?}', [GroupController::class, 'viewGroupUsers'])->name( 'Groups.viewGroupUsers');
+        Route::get('/{group_name}/view-users/{page?}', [GroupController::class, 'viewGroupUsers'])->name('Groups.viewGroupUsers');
         Route::post('/{group_name}/upload-file', [FileController::class, 'uploadFiles'])->name('Files.uploadFiles');
         Route::get('/{group_name}/exit-group', [GroupController::class, 'exitGroup'])->name( 'Groups.exitGroup');
         Route::post('/{group_name}/check-in', [FileController::class, 'checkIn'])->name('Files.checkIn');

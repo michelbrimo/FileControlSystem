@@ -69,7 +69,7 @@ class FileController extends Controller
         $currentRoute = Route::current();
         $routeName = $currentRoute->getName();
         $service_function = $this->getRouteExploded($routeName);
-        $success_message = "you've compared the files successfully";
+        $success_message = "You've compared the files successfully";
 
         return $this->service_transformer->execute(
             $request->all(),
