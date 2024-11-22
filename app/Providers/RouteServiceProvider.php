@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\File;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -26,6 +27,17 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Route::bind('group_name', function ($value) {
+            request()->route()->setParameter('group_name', $value);
+            return Group::where('name', $value)->firstOrFail();
+        });
+        
+        Route::bind('username', function ($value) {
+            request()->route()->setParameter('username', $value);
+            return User::where('username', $value)->firstOrFail();
+        });
+
+
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
@@ -39,14 +51,6 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
         });
 
-        Route::bind('group_name', function ($value) {
-            request()->route()->setParameter('group', $value);
-            return Group::where('name', $value)->firstOrFail();
-        });
         
-        Route::bind('username', function ($value) {
-            request()->route()->setParameter('user', $value);
-            return User::where('username', $value)->firstOrFail();
-        });
     }
 }

@@ -19,6 +19,9 @@ class ServiceTransfromer{
         'uploadFiles'=>['LoggingAspect', 'TransactionAspect'],
         'exitGroup' => [],
         'kickFromGroup' => [],
+        'checkIn' => ["TransactionAspect"],
+        'checkOut' => [],
+
     ];
 
     private $service_mapper = [];

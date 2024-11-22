@@ -23,7 +23,6 @@ return new class extends Migration
                 ->on('files') 
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('checks');
             $table->timestamps();
         });
     }

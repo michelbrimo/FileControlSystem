@@ -20,23 +20,27 @@ class FileRepository{
         return FileCheck::create($data);
     }
 
-    function getLastFileCheckIn_byId($file_id) {
+    function getCheckIn($file_id) {
         return FileCheck::where('file_id', '=', $file_id)
-                        ->orderBy('id', 'desc')
                         ->first();
     }
     
-    public function uploadNewFiles($data){  
+    public function createFile($data){  
         return File::create($data);
     }
 
-    public function uploadExistingFiles($data){  
+    public function createHistory($data){  
         return History::create($data);
     }
 
     public function updateFile($file_id, $data){  
         return File::where('id', '=', $file_id)
                    ->update($data);
+    }
+
+    function deleteCheck($check_id) {
+        return FileCheck::where('id', '=', $check_id)
+                        ->delete();
     }
 
     

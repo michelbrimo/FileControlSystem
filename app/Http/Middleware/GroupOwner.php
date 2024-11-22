@@ -17,7 +17,7 @@ class GroupOwner
     public function handle(Request $request, Closure $next): Response
     {
         $user_id = auth()->user()->id;
-        $admin_id = $request->route('group')->admin_id;
+        $admin_id = $request->route('group_name')->admin_id;
 
         if($admin_id == $user_id) return $next($request);
 

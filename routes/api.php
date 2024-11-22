@@ -19,20 +19,19 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/accept-invitation/{invitation_id}', [GroupController::class, 'acceptInvitation'])->name( 'Groups.acceptInvitation');
     Route::get('/reject-invitation/{invitation_id}', [GroupController::class, 'rejectInvitation'])->name( 'Groups.rejectInvitation');
     
-    Route::middleware('GroupOwner', 'GroupMember')->group(function(){
+    Route::middleware('GroupOwner')->group(function(){
         Route::post('/{group_name}/invite-users', [GroupController::class, 'inviteUsers'])->name('Groups.inviteUsers');
         Route::get('/{group_name}/kick-from-group/{username}', [GroupController::class, 'kickFromGroup'])->name( 'Groups.kickFromGroup');
     });
 
     Route::middleware('GroupMember')->group(function (){
         Route::get('/{group_name}/view-users/{page?}', [GroupController::class, 'viewGroupUsers'])->name( 'Groups.viewGroupUsers');
-        Route::post('/{group_name}/upload-file/{file_id?}', [FileController::class, 'uploadFiles'])->name('Files.uploadFiles');
+        Route::post('/{group_name}/upload-file', [FileController::class, 'uploadFiles'])->name('Files.uploadFiles');
         Route::get('/{group_name}/exit-group', [GroupController::class, 'exitGroup'])->name( 'Groups.exitGroup');
+        Route::post('/{group_name}/check-in', [FileController::class, 'checkIn'])->name('Files.checkIn');
+        Route::post('/{group_name}/check-out/{file_id}', [FileController::class, 'checkOut'])->name('Files.checkOut');
 
     });
-    
-
-    
     
 });
 Route::get('/diff',[FileController::class,'diff']);

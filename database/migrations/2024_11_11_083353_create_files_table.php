@@ -16,6 +16,11 @@ return new class extends Migration
             $table->string('file_name');
             $table->string('file_path');
             $table->boolean('state');
+            $table->foreignId('owner_id')
+                ->references('id')
+                ->on('users') 
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->foreignId('group_id')
                 ->references('id')
                 ->on('groups') 

@@ -68,6 +68,10 @@ class User extends Authenticatable
     public function InvitationSender():HasMany{
         return $this->hasMany(Invitation::class);
     }
+
+    public function Files(): HasMany {
+        return $this->hasMany(File::class);
+    }
 }
 
 

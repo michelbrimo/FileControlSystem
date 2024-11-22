@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use Illuminate\Http\Request;
 use App\Services\ServiceTransfromer;
 use Illuminate\Support\Facades\Route;
@@ -18,14 +19,13 @@ class FileController extends Controller
         $this->service_transformer = new ServiceTransfromer();
     }
     
-    function uploadFiles(Request $request, $group, $file_id = null){
+    function uploadFiles(Request $request, $group){
         $currentRoute = Route::current();
         $routeName = $currentRoute->getName();
         $service_function = $this->getRouteExploded($routeName);
         $success_message = 'file uploaded successfully';
 
         $request['group_id'] = $group->id;
-        if ($file_id) $request['file_id'] = $file_id;
         return $this->service_transformer->execute(
             $request->all(),
             $service_function['service'],
@@ -34,6 +34,39 @@ class FileController extends Controller
         );    
     }
 
+    public function checkIn(Request $request) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "you've checked-in the file(s) successfully";
+
+        return $this->service_transformer->execute(
+            $request->all(),
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
+    
+    public function checkOut(Request $request, $group_name, $file_id) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "you've checked-in the file(s) successfully";
+
+        $request['file_id'] = $file_id;
+        return $this->service_transformer->execute(
+            $request->all(),
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
+
+
+
+
+    # testing
     public function diff(Request $request)
     {
         $validator = Validator::make($request->all(), [
