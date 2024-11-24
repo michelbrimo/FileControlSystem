@@ -25,14 +25,17 @@ class GroupRepository{
                     ->first();
     }
     
+    
     public function getGroupUsers_byName($group_id, $page) {
         $limit = 10;
         $offset = ($page - 1) * $limit;
         return UserGroup::where('group_id', '=', $group_id)
+                        ->join('users', 'user_groups.user_id', '=', 'users.id') 
                         ->skip($offset)
                         ->take($limit)
-                        ->pluck('user_id')
-                        ->toArray();    
+                        ->select('users.id', 'users.username') 
+                        ->get()
+                        ->toArray();
     }
 
     public function getInvitation_byGroupAndUser($group_id, $user_id){

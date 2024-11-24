@@ -146,7 +146,8 @@ class GroupServices
         } 
 
         $result = $this->group_repository->getGroupUsers_byName($data['group_id'], $data['page']);
-        return ["users_id" => $result];
+        return ["users" => $result];
+        // return $result;
     }
 
     function exitGroup($data) {

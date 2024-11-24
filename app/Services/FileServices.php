@@ -21,9 +21,10 @@ class FileServices
     public function uploadFiles($data){
         $validator = Validator::make($data, [
             'file_path' => 'required|array', 
-            'group_id' => 'required',
+            'group_name' => 'required',
         ]);
     
+        
         if ($validator->fails()) {
             throw new Exception(
                 $validator->errors()->first(),
@@ -31,13 +32,15 @@ class FileServices
             );
         }
         
+        $group_id = $this->group_repository->getGroup_byName($data['group_name'])->id;
+
         $results = []; 
         foreach ($data['file_path'] as $filePath) {
             if (!file_exists($filePath)) throw new Exception($filePath." does not exist.", 404);
 
             $result = $this->processSingleFile([
                 'file_path' => $filePath,
-                'group_id' => $data['group_id'],
+                'group_id' => $group_id,
             ]);
             $results[] = $result;
         }
@@ -59,7 +62,7 @@ class FileServices
         $storagePath = 'files/' . $uniqueFileName . '/' . $nameWithoutExtension . "_original." .  $fileExtension;
         
         $fileContents = file_get_contents($originalFilePath);
-        Storage::disk('public')->put($storagePath, $fileContents);
+        
 
         $file =  $this->file_repository->createFile([
             'state' => 0,
@@ -74,7 +77,9 @@ class FileServices
             'user_id' => auth()->user()->id,
             'file_id' => $file->id
         ]); 
-
+        
+        Storage::disk('public')->put($storagePath, $fileContents);
+        
         return $file;
     }
 
