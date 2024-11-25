@@ -114,6 +114,18 @@ class GroupController extends Controller
         );    
     }
 
-    
+    public function viewGroups(Request $request) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = 'group created successfully';
+        
+        return $this->service_transformer->execute(
+            $request->all(),
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
     
 }

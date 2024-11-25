@@ -19,6 +19,8 @@ return new class extends Migration
             ->on('users')
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
+            $table->integer('numberOfMembers');
+            $table->integer('numberOfFiles');
             $table->timestamps();
         });
     }

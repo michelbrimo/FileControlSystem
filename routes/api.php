@@ -17,6 +17,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/view-users/{page?}', [UserController::class, 'viewUsers'])->name('Users.viewUsers');
     Route::get('/accept-invitation/{invitation_id}', [GroupController::class, 'acceptInvitation'])->name( 'Groups.acceptInvitation');
     Route::get('/reject-invitation/{invitation_id}', [GroupController::class, 'rejectInvitation'])->name( 'Groups.rejectInvitation');
+    Route::get('/view-groups', [GroupController::class, 'viewGroups'])->name( 'Groups.viewGroups');
     
     Route::middleware('GroupOwner')->group(function(){
         Route::post('/{group_name}/invite-users', [GroupController::class, 'inviteUsers'])->name('Groups.inviteUsers');

@@ -22,6 +22,7 @@ class ServiceTransfromer{
         'checkIn' => ["TransactionAspect"],
         'checkOut' => [],
         'compareFiles'=>[],
+        'viewGroups'=>[],
 
     ];
 

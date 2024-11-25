@@ -38,6 +38,12 @@ class GroupRepository{
                         ->toArray();
     }
 
+    public function getGroups(){
+        return Group::select('id', 'name', 'admin_id', 'numberOfMembers', 'numberOfFiles')
+                    ->with(['admin:id,username']) // Load only the admin's id and username
+                    ->get();;
+    }
+
     public function getInvitation_byGroupAndUser($group_id, $user_id){
         return Invitation::where('group_id', '=', $group_id)
                          ->where('user_id', '=', $user_id)
