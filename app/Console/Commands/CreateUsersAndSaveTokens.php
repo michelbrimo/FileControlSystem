@@ -13,7 +13,7 @@ class CreateUsersAndSaveTokens extends Command
      *
      * @var string
      */
-    protected $signature = 'users:create-and-save-tokens';
+    protected $signature = 'users:create-and-save-tokens {count=100}';
 
     /**
      * The console command description.
@@ -29,10 +29,12 @@ class CreateUsersAndSaveTokens extends Command
      */
     public function handle()
     {
-        $url = 'http://127.0.0.1:8000/api/register';
-        $userTokens = [];
+        $count = $this->argument('count');
 
-        for ($i = 1; $i <= 100; $i++) {
+        $url = 'http://127.0.0.1:8000/api/register';
+        $userInfos = [];
+
+        for ($i = 1; $i <= $count; $i++) {
             $username = "user{$i}";
             $email = "user{$i}@example.com";
             $password = "password123";
@@ -46,9 +48,11 @@ class CreateUsersAndSaveTokens extends Command
 
             if ($response->successful()) {
                 $token = $response['data']['token'];
+                $id = $response['data']['id'];
 
-                $userTokens[] = [
-                    'token' => $token
+                $userInfos[] = [
+                    'token' => $token,
+                    'id' => $id,
                 ];
                 $this->info("User {$username} created and token saved.");
             } else {
@@ -56,16 +60,15 @@ class CreateUsersAndSaveTokens extends Command
             }
         }
 
-        // Write user tokens to CSV
-        $csvFile = fopen(storage_path('user_tokens.csv'), 'w');
-        fputcsv($csvFile, ['token']); // CSV header
+        $csvFile = fopen(storage_path('load_test/users_info.csv'), 'w');
+        fputcsv($csvFile, ['token', 'id']); // CSV header
 
-        foreach ($userTokens as $userToken) {
-            fputcsv($csvFile, $userToken);
+        foreach ($userInfos as $userInfo) {
+            fputcsv($csvFile, [$userInfo['token'], $userInfo['id']]); // Wrap token in an array
         }
 
         fclose($csvFile);
-        $this->info('User tokens saved successfully to user_tokens.csv.');
+        $this->info('User tokens saved successfully to users_info.csv.');
 
         return 0;
     }
