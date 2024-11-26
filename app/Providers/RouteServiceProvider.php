@@ -5,11 +5,14 @@ namespace App\Providers;
 use App\Models\File;
 use App\Models\Group;
 use App\Models\User;
+use App\Models\UserGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+
+use function PHPUnit\Framework\returnSelf;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -28,8 +31,12 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Route::bind('group_name', function ($value) {
-            request()->route()->setParameter('group_name', $value);
-            return Group::where('name', $value)->firstOrFail();
+            try{
+                request()->route()->setParameter('group_name', $value);
+                return Group::where('name', $value)->firstOrFail();
+            }catch (\Exception $e) {
+                return $value;
+            }
         });
         
         Route::bind('username', function ($value) {

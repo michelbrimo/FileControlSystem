@@ -146,7 +146,7 @@ class GroupServices
         } 
 
         $result = $this->group_repository->getGroupUsers_byName($data['group_id'], $data['page']);
-        return ["users_id" => $result];
+        return ["users" => $result];
     }
 
     function exitGroup($data) {
@@ -184,6 +184,11 @@ class GroupServices
         }
         else throw new Exception("user is not a member in this group", 400);
         
+    }
+
+    function viewGroups($data){
+        $result = $this->group_repository->getGroups();
+        return $result;
     }
 
 

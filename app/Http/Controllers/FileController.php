@@ -25,7 +25,12 @@ class FileController extends Controller
         $service_function = $this->getRouteExploded($routeName);
         $success_message = 'file uploaded successfully';
 
-        $request['group_id'] = $group->id;
+        if(is_string($group)){
+            $request['group_name'] = $group;
+        }else{
+            $request['group_name'] = $group->name;
+        }
+        
         return $this->service_transformer->execute(
             $request->all(),
             $service_function['service'],

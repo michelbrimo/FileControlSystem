@@ -16,6 +16,12 @@ class Group extends Model
         'admin_id',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+
     public function File():HasMany{
         return $this->hasMany(File::class);
     }
@@ -24,11 +30,12 @@ class Group extends Model
         return $this->hasMany(UserGroup::class);
     }
 
-    public function Admin():HasOne{
-        return $this->hasOne(User::class);
+    public function Admin(){
+        return $this->belongsTo(User::class, 'admin_id');
     }
 
     public function Invitation():HasMany{
         return $this->hasMany(Invitation::class);
     }
+
 }
