@@ -26,6 +26,7 @@ return new class extends Migration
                 ->on('groups') 
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->integer('versions');
             $table->timestamps();
         });
     }

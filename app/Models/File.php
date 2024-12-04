@@ -18,7 +18,8 @@ class File extends Model
         'file_path',
         'state',
         'group_id',
-        'owner_id'
+        'owner_id',
+        'versions'
     ];
 
     
@@ -34,7 +35,7 @@ class File extends Model
         return $this->hasMany(FileCheck::class);
     }
 
-    public function FileOwner():BelongsTo {
-        return $this->belongsTo(User::class);
+    public function fileowner():BelongsTo {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

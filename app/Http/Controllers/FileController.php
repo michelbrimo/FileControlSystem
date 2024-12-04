@@ -69,6 +69,49 @@ class FileController extends Controller
             $success_message
         );    
     }
+    
+    public function viewGroupFiles($group, $page=1) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "group files fetched successfully";
+
+        return $this->service_transformer->execute(
+            ['page'=> $page, 'group_id'=> $group->id],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
+    
+    public function viewGroupFileDetails($group, $file_id, $page=1) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "file details fetched successfully";
+
+
+        return $this->service_transformer->execute(
+            ['file_id'=> $file_id, 'page'=> $page],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
+
+    public function deleteFile($group, $file_id) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "file deleted successfully";
+
+        return $this->service_transformer->execute(
+            ['file_id'=> $file_id, 'group'=>$group],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
 
 
     public function compareFiles(Request $request)

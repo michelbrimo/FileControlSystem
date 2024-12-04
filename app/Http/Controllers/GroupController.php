@@ -106,7 +106,7 @@ class GroupController extends Controller
         $success_message = "you've exited the group successfully";
 
         return $this->service_transformer->execute(
-            ['group_id' => $group->id],
+            ['group' => $group],
             $service_function['service'],
             $service_function['function'],
             $success_message
@@ -120,7 +120,7 @@ class GroupController extends Controller
         $success_message = "you kicked this user successfully";
 
         return $this->service_transformer->execute(
-            ['group_id' => $group->id, 'user_id' => $user->id],
+            ['group' => $group, 'user_id' => $user->id],
             $service_function['service'],
             $service_function['function'],
             $success_message

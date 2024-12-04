@@ -14,6 +14,7 @@ class History extends Model
         'file_id',
         'user_id',
         'link',
+        'description'
     ];
 
     public function File():BelongsTo{
@@ -21,6 +22,6 @@ class History extends Model
     }
 
     public function Users():BelongsTo{
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

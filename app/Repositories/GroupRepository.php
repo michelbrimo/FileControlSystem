@@ -26,6 +26,11 @@ class GroupRepository{
         return Group::where('id', '=', $id)
                     ->update($data);
     }
+    
+    public function deleteGroup($id) {
+        return Group::where('id', '=', $id)
+                    ->delete();
+    }
 
     public function getGroup_byName($name) {
         return Group::where('name', '=', $name)

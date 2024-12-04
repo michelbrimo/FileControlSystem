@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::middleware('GroupOwner')->group(function(){
         Route::post('/{group_name}/invite-users', [GroupController::class, 'inviteUsers'])->name('Groups.inviteUsers');
         Route::get('/{group_name}/kick-from-group/{username}', [GroupController::class, 'kickFromGroup'])->name( 'Groups.kickFromGroup');
+        Route::get('/{group_name}/delete-file/{file_id}', [FileController::class, 'deleteFile'])->name( 'Files.deleteFile');
     });
 
     Route::middleware('GroupMember')->group(function (){
@@ -33,5 +34,7 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::get('/{group_name}/exit-group', [GroupController::class, 'exitGroup'])->name( 'Groups.exitGroup');
         Route::post('/{group_name}/check-in', [FileController::class, 'checkIn'])->name('Files.checkIn');
         Route::post('/{group_name}/check-out/{file_id}', [FileController::class, 'checkOut'])->name('Files.checkOut');
+        Route::get('/{group_name}/view-files/{page?}', [FileController::class, 'viewGroupFiles'])->name('Files.viewGroupFiles');
+        Route::get('/{group_name}/view-file-details/{file_id}/{page?}', [FileController::class, 'viewGroupFileDetails'])->name('Files.viewGroupFileDetails');
     });
 });

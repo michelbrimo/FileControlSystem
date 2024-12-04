@@ -15,15 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('link');
             $table->foreignId('user_id')
-                ->references('id')
-                ->on('users') 
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+            ->references('id')
+            ->on('users') 
+            ->cascadeOnDelete()
+            ->cascadeOnUpdate();
             $table->foreignId('file_id')
-                ->references('id')
-                ->on('files') 
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+            ->references('id')
+            ->on('files') 
+            ->cascadeOnDelete()
+            ->cascadeOnUpdate();
+            $table->string('description')->default("");
             $table->timestamps();
         });
     }

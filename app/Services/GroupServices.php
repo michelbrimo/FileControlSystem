@@ -156,7 +156,7 @@ class GroupServices
 
     function exitGroup($data) {
         $validator = Validator::make($data, [
-            'group_id' => 'required'
+            'group' => 'required'
         ]);
 
         if($validator->fails()){
@@ -165,13 +165,20 @@ class GroupServices
                 422);
         }
 
-        $this->group_repository->exitGroup(auth()->user()->id, $data['group_id']);
+        $this->group_repository->exitGroup(auth()->user()->id, $data['group']->id);
+    
+        if ($data['group']->numberOfMembers == 1)
+            $this->group_repository->deleteGroup($data['group']->id);
+        else
+            $this->group_repository->updateGroup($data['group']->id, ["numberOfMembers" => $data['group']->numberOfMembers -1]);
+
+
         return null;
     }
 
     function kickFromGroup($data) {
         $validator = Validator::make($data, [
-            'group_id' => 'required',
+            'group' => 'required',
             'user_id' => 'required'
         ]);
 
@@ -181,10 +188,11 @@ class GroupServices
                 422);
         }
 
-        $is_member = $this->group_repository->getMember($data['user_id'], $data['group_id']);
+        $is_member = $this->group_repository->getMember($data['user_id'], $data['group']->id);
 
         if ($is_member){
-            $this->group_repository->exitGroup($data['user_id'], $data['group_id']);
+            $this->group_repository->exitGroup($data['user_id'], $data['group']->id);
+            $this->group_repository->updateGroup($data['group']->id, ["numberOfMembers" => $data['group']->numberOfMembers -1]);
             return null;
         }
         else throw new Exception("user is not a member in this group", 400);

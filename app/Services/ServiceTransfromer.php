@@ -24,7 +24,10 @@ class ServiceTransfromer{
         'checkOut' => [],
         'compareFiles'=>[],
         'viewGroups'=>[],
-        "viewMyGroups"=>[]
+        "viewMyGroups"=>[],
+        "viewGroupFiles" => [],
+        "deleteFile" => [],
+        "viewGroupFileDetails" => []
     ];
 
     private $service_mapper = [];

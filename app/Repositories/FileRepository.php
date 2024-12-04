@@ -33,9 +33,14 @@ class FileRepository{
         return History::create($data);
     }
 
-    public function updateFile($file_id, $data){  
+    public function updateFileOnlytoChechIn($file_id, $data){  
         return File::where('id', '=', $file_id)
                    ->where('state','=', 0)
+                   ->update($data);
+    }
+    
+    public function updateFile($file_id, $data){  
+        return File::where('id', '=', $file_id)
                    ->update($data);
     }
 
@@ -44,7 +49,34 @@ class FileRepository{
                         ->delete();
     }
 
-    
 
+    function getGroupFiles($group_id, $page) {
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+        return File::where('group_id', '=', $group_id)
+                   ->with('fileOwner:id,username')
+                   ->skip($offset)
+                    ->take($limit)
+                   ->select(['id', 'file_name', 'state', 'owner_id', 'versions'])
+                   ->get();
+    }
     
+    function deleteFile($file_id) {
+        File::where('id', '=', $file_id)
+            ->delete();
+        FileCheck::where('file_id', '=', $file_id)
+                 ->delete();
+    }
+    
+    function viewFileDetails($file_id, $page) {
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        return History::where('file_id', '=', $file_id)
+                      ->with('Users:id,username')
+                      ->skip($offset)
+                      ->take($limit)
+                      ->select(['id', 'user_id','link', 'description'])
+                      ->get();
+    }
 }
