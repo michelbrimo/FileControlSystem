@@ -51,7 +51,7 @@ class FileServices
     {
         $originalFilePath = $data['file_path'];
 
-        $fileName = basename($originalFilePath); 
+        $fileName = $originalFilePath->getClientOriginalName(); 
         $nameWithoutExtension = pathinfo($fileName, PATHINFO_FILENAME); 
         $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION); 
         $uniqueFileName = $nameWithoutExtension . '_' . $data['group_id'];
@@ -76,8 +76,10 @@ class FileServices
             'link' => $file->file_path,
             'user_id' => auth()->user()->id,
             'file_id' => $file->id
-        ]); 
+        ]);
         
+        $group = $this->group_repository->getGroup_byId($data['group_id']);
+        $this->group_repository->updateGroup($group->id, ['numberOfFiles' => $group->numberOfFiles +1]);
         Storage::disk('public')->put($storagePath, $fileContents);
         
         return $file;
@@ -102,12 +104,13 @@ class FileServices
                 $file = $this->file_repository->getFile_byId($check_in['file_id']);
                 throw new Exception("$file->file_name is checked-in by another user", 400);
             }
+            
+            $this->file_repository->updateFile($file_id, ["state" => 1]);
+            
             $results[] = $this->file_repository->createCheck([
                 'user_id' => auth()->user()->id,
                 'file_id' => $file_id
             ]);
-
-            $this->file_repository->updateFile( $file_id, ["state" => 1]);
         }
 
         return $results; 
@@ -115,7 +118,7 @@ class FileServices
 
     function checkOut($data) {
         $validator = Validator::make($data, [
-            'file_path' => 'required|string', 
+            'file_path' => 'required|file', 
             'file_id' => 'required|integer',
         ]);
 
@@ -130,7 +133,7 @@ class FileServices
 
         $originalFilePath = $data['file_path'];
 
-        $fileName = basename($originalFilePath); 
+        $fileName = $originalFilePath->getClientOriginalName(); 
         $nameWithoutExtension = pathinfo($fileName, PATHINFO_FILENAME); 
         $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION); 
         $uniqueFileName = $nameWithoutExtension . '_' . $file->group_id;

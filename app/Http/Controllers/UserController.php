@@ -71,9 +71,4 @@ class UserController extends Controller
             $success_message
         );    
     }
-
-    
-
-
-
 }

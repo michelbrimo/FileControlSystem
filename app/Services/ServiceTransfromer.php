@@ -15,6 +15,7 @@ class ServiceTransfromer{
         'inviteUsers' => ['LoggingAspect'],
         'acceptInvitation' => ['LoggingAspect', 'TransactionAspect'],
         'rejectInvitation' => ['LoggingAspect', 'TransactionAspect'],
+        'viewMyInvitations' => [],
         'createGroup' => ['LoggingAspect'],
         'uploadFiles'=>['LoggingAspect', 'TransactionAspect'],
         'exitGroup' => [],
@@ -23,7 +24,7 @@ class ServiceTransfromer{
         'checkOut' => [],
         'compareFiles'=>[],
         'viewGroups'=>[],
-
+        "viewMyGroups"=>[]
     ];
 
     private $service_mapper = [];

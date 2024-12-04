@@ -71,6 +71,19 @@ class GroupController extends Controller
             $success_message
         );    
     }
+    public function viewMyInvitations($page=1) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = 'invitations fetched successfully';
+        
+        return $this->service_transformer->execute(
+            ['page' => $page],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
 
     public function viewGroupUsers($group, $page=1) {
         $currentRoute = Route::current();
@@ -114,18 +127,31 @@ class GroupController extends Controller
         );    
     }
 
-    public function viewGroups(Request $request) {
+    public function viewGroups($page=1) {
         $currentRoute = Route::current();
         $routeName = $currentRoute->getName();
         $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'group created successfully';
+        $success_message = 'groups fetched successfully';
         
         return $this->service_transformer->execute(
-            $request->all(),
+            ['page' => $page],
             $service_function['service'],
             $service_function['function'],
             $success_message
         );    
     }
     
+    public function viewMyGroups($page=1) {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = 'your groups fetched successfully';
+        
+        return $this->service_transformer->execute(
+            ['page' => $page],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );    
+    }
 }

@@ -25,6 +25,8 @@ class FileController extends Controller
         $service_function = $this->getRouteExploded($routeName);
         $success_message = 'file uploaded successfully';
 
+        $test = $request['file_path'];
+
         if(is_string($group)){
             $request['group_name'] = $group;
         }else{

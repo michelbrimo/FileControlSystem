@@ -35,6 +35,7 @@ class FileRepository{
 
     public function updateFile($file_id, $data){  
         return File::where('id', '=', $file_id)
+                   ->where('state','=', 0)
                    ->update($data);
     }
 

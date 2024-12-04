@@ -17,8 +17,11 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/view-users/{page?}', [UserController::class, 'viewUsers'])->name('Users.viewUsers');
     Route::get('/accept-invitation/{invitation_id}', [GroupController::class, 'acceptInvitation'])->name( 'Groups.acceptInvitation');
     Route::get('/reject-invitation/{invitation_id}', [GroupController::class, 'rejectInvitation'])->name( 'Groups.rejectInvitation');
-    Route::get('/view-groups', [GroupController::class, 'viewGroups'])->name( 'Groups.viewGroups');
-    
+    Route::get('/view-my-invitations/{page?}', [GroupController::class, 'viewMyInvitations'])->name('Groups.viewMyInvitations');
+    Route::get('/view-groups/{page?}', [GroupController::class, 'viewGroups'])->name('Groups.viewGroups');
+    Route::get('/view-my-groups/{page?}', [GroupController::class, 'viewMyGroups'])->name('Groups.viewMyGroups');
+
+
     Route::middleware('GroupOwner')->group(function(){
         Route::post('/{group_name}/invite-users', [GroupController::class, 'inviteUsers'])->name('Groups.inviteUsers');
         Route::get('/{group_name}/kick-from-group/{username}', [GroupController::class, 'kickFromGroup'])->name( 'Groups.kickFromGroup');
@@ -31,5 +34,4 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/{group_name}/check-in', [FileController::class, 'checkIn'])->name('Files.checkIn');
         Route::post('/{group_name}/check-out/{file_id}', [FileController::class, 'checkOut'])->name('Files.checkOut');
     });
-    
 });

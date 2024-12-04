@@ -133,6 +133,11 @@ class GroupServices
         throw new Exception("Invitation doesn't exist", 400);
     }
 
+    public function viewMyInvitations($data) {
+        $invitations = $this->group_repository->getMyInvitations(auth()->user()->id);
+        return $invitations;
+    }
+
     public function viewGroupUsers($data) {
         $validator = Validator::make($data, [
             'page' => 'integer|required',
@@ -183,13 +188,16 @@ class GroupServices
             return null;
         }
         else throw new Exception("user is not a member in this group", 400);
-        
     }
 
     function viewGroups($data){
-        $result = $this->group_repository->getGroups();
-        return $result;
+        return $this->group_repository->getGroups($data['page']);
     }
+    
+    function viewMyGroups($data){
+        return $this->group_repository->getMyGroups($data['page']);
+    }
+    
 
 
 }
