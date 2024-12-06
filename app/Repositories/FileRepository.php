@@ -11,9 +11,10 @@ class FileRepository{
         return File::where('id', '=', $file_id)
         ->first();
     }
-    public function getFile_byName($file_name) {
+    public function fileExists($file_name, $group_id) {
         return File::where('file_name', '=', $file_name)
-        ->first();
+                   ->where('group_id', '=', $group_id)
+                   ->first();
     }
 
     function createCheck($data) {

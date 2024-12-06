@@ -55,7 +55,8 @@ class FileServices
         $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION); 
         $uniqueFileName = $nameWithoutExtension . '_' . $data['group_id'];
     
-        if ($this->file_repository->getFile_byName($fileName)) {
+       
+        if ($this->file_repository->fileExists($fileName, $data['group_id'])) {
             throw new Exception($uniqueFileName . " already exists in your group.", 400);
         }
     
