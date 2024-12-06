@@ -93,6 +93,7 @@ class FileServices
     public function checkIn($data){
         $validator = Validator::make($data, [
             'files_id' => 'required|array', 
+            'group_id' => 'required|integer', 
         ]);
     
         if ($validator->fails()) {
@@ -101,14 +102,17 @@ class FileServices
                 422
             );
         }
-        
+
         $results = []; 
         foreach ($data['files_id'] as $file_id) {
+            if(!$this->file_repository->fileExists((int)$file_id, $data['group_id']))
+                throw new Exception("file not found in this group", 400);
             $check_in = $this->file_repository->getCheckIn($file_id);
             if ($check_in){
                 $file = $this->file_repository->getFile_byId($check_in['file_id']);
                 throw new Exception("$file->file_name is checked-in by another user", 400);
             }
+
             
             $this->file_repository->updateFileOnlytoChechIn($file_id, ["state" => 1]);
             
@@ -125,6 +129,7 @@ class FileServices
         $validator = Validator::make($data, [
             'file_path' => 'required|file', 
             'file_id' => 'required|integer',
+            'group_id' => 'required|integer',
             "description" => 'string'
         ]);
 
@@ -135,7 +140,12 @@ class FileServices
             );
         }
 
+        
+
         $file = $this->file_repository->getFile_byId($data['file_id']);
+
+        if(!$this->file_repository->fileExists($file->id, $data['group_id']))
+            throw new Exception("file not found in this group", 400);
 
         $originalFilePath = $data['file_path'];
 
@@ -164,7 +174,7 @@ class FileServices
 
         $this->file_repository->updateFile($data['file_id'], [
             'state' => 0,
-            'file_path' => $storagePath,
+            'file_path' => 'storage/'.$storagePath,
             'versions' => $file->versions +1
         ]);
 

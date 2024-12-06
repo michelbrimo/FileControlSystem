@@ -11,8 +11,8 @@ class FileRepository{
         return File::where('id', '=', $file_id)
         ->first();
     }
-    public function fileExists($file_name, $group_id) {
-        return File::where('file_name', '=', $file_name)
+    public function fileExists($id, $group_id) {
+        return File::where('id', '=', $id)
                    ->where('group_id', '=', $group_id)
                    ->first();
     }

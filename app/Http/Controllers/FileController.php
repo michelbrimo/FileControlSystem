@@ -39,12 +39,13 @@ class FileController extends Controller
         );    
     }
 
-    public function checkIn(Request $request) {
+    public function checkIn(Request $request, $group) {
         $currentRoute = Route::current();
         $routeName = $currentRoute->getName();
         $service_function = $this->getRouteExploded($routeName);
         $success_message = "you've checked-in the file(s) successfully";
-
+       
+        $request['group_id'] = $group->id;
         return $this->service_transformer->execute(
             $request->all(),
             $service_function['service'],
@@ -53,13 +54,15 @@ class FileController extends Controller
         );    
     }
     
-    public function checkOut(Request $request, $group_name, $file_id) {
+    public function checkOut(Request $request, $group, $file_id) {
         $currentRoute = Route::current();
         $routeName = $currentRoute->getName();
         $service_function = $this->getRouteExploded($routeName);
         $success_message = "you've checked-in the file(s) successfully";
 
         $request['file_id'] = $file_id;
+        $request['group_id'] = $group->id;
+
         return $this->service_transformer->execute(
             $request->all(),
             $service_function['service'],
