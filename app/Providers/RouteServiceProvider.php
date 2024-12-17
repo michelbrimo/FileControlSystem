@@ -35,6 +35,23 @@ class RouteServiceProvider extends ServiceProvider
                 request()->route()->setParameter('group_name', $value);
                 return Group::where('name', $value)->firstOrFail();
             }catch (\Exception $e) {
+                $currentRouteName = request()->route()->getName();
+
+                if ($currentRouteName === 'Files.uploadFiles')
+                {
+                    $user_id = auth()->user()->id;
+                    $group = Group::create([
+                                'name' => $value,
+                                'admin_id' => $user_id,
+                                'numberOfMembers' => 1
+                            ]);
+                    $group_id = $group->id;
+                    UserGroup::create([
+                        'user_id' => $user_id,
+                        'group_id' => $group_id,
+                    ]);
+                    return $group;
+                }
                 return $value;
             }
         });
