@@ -14,7 +14,8 @@ class History extends Model
         'file_id',
         'user_id',
         'link',
-        'description'
+        'description',
+        'diffrence'
     ];
 
     public function File():BelongsTo{

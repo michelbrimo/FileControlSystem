@@ -144,11 +144,16 @@ class FileServices
 
         $file = $this->file_repository->getFile_byId($data['file_id']);
 
+        
+        $oldFilePath = $file->file_path;
+        $relativeOldPath = str_replace('storage/files', 'public/files', $oldFilePath);
+        $fullOldFilePath = Storage::path($relativeOldPath);
+        $fullOldFilePath = str_replace('/', '\\', $fullOldFilePath);
+        
         if(!$this->file_repository->fileExists($file->id, $data['group_id']))
             throw new Exception("file not found in this group", 400);
 
         $originalFilePath = $data['file_path'];
-
         $fileName = $originalFilePath->getClientOriginalName(); 
         $nameWithoutExtension = pathinfo($fileName, PATHINFO_FILENAME); 
         $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION); 
@@ -182,14 +187,38 @@ class FileServices
             'check_id' => $check_in->id,
         ]);
 
+        $relativeNewPath = str_replace('files', 'public/files', $storagePath);
+        $fullNewFilePath = Storage::path($relativeNewPath);
+        $fullNewFilePath = str_replace('/', '\\', $fullNewFilePath);
+
+        $fileToCompare = [
+            'old_path' => $fullOldFilePath, 
+            'new_path' => $fullNewFilePath
+        ];
+
+        $responseData = $this->compareFiles($fileToCompare);
+
+        $responseDataArray = $responseData->getData(true);
+
+        $differences = $responseDataArray['diffrence'] ;
+
+        if (empty($differences)){
+            $differencesJson = "no Changes";
+        }else{
+            $differencesJson = json_encode($differences);
+        }
+
         return $this->file_repository->createHistory([
             'link' => $storagePath,
             'user_id' => auth()->user()->id,
             'file_id' => $data['file_id'],
-            'description' => $data['description']
+            'description' => $data['description'],
+            'diffrence' => $differencesJson
         ]); 
     }
     
+
+
     public function viewGroupFiles($data) {
         $validator = Validator::make($data, [
             'page' => 'integer', 
@@ -254,6 +283,8 @@ class FileServices
 
         $oldFilePath = $data['old_path'];
         $newFilePath = $data['new_path'];
+
+        // return $oldFilePath;
 
         if (!file_exists($oldFilePath) || !file_exists($newFilePath)) {
             return response()->json([
