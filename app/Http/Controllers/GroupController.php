@@ -14,144 +14,54 @@ class GroupController extends Controller
     function __construct(){
         $this->service_transformer = new ServiceTransfromer();
     }
-
-    public function createGroup(Request $request) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'group created successfully';
-        
-        return $this->service_transformer->execute(
-            $request->all(),
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
-    }
-
-    public function inviteUsers(Request $request, $group) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'users invited successfully';
-        
-        $request['group'] = $group;
-        return $this->service_transformer->execute(
-            $request->all(),
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
-    }
-
-    public function acceptInvitation($invitation_id) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'invitation accepted successfully';
-        
-        return $this->service_transformer->execute(
-            ['invitation_id' => $invitation_id],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
     
+    public function createGroup(Request $request){
+        $messege = 'Group created successfully';
+        return $this->executeService($this->service_transformer, $request, [], $messege);
     }
-    public function rejectInvitation($invitation_id) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'invitation rejected successfully';
-        
-        return $this->service_transformer->execute(
-            ['invitation_id' => $invitation_id],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function inviteUsers(Request $request, $group){
+        $additionalData = ['group' => $group];
+        $messege =  'Users invited successfully';
+        return $this->executeService($this->service_transformer, $request, $additionalData, $messege);
     }
-    public function viewMyInvitations($page=1) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'invitations fetched successfully';
-        
-        return $this->service_transformer->execute(
-            ['page' => $page],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function acceptInvitation($invitation_id){
+        $additionalData = ['invitation_id' => $invitation_id];
+        $messege =  'Invitation accepted successfully';
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
-
-    public function viewGroupUsers($group, $page=1) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "group's users has been fetched successfully";
-
-        return $this->service_transformer->execute(
-            ['page' => $page, 'group_id' => $group->id],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function rejectInvitation($invitation_id){
+        $additionalData = ['invitation_id' => $invitation_id];
+        $messege =  'Invitation rejected successfully';
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
-
-    public function exitGroup($group) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "you've exited the group successfully";
-
-        return $this->service_transformer->execute(
-            ['group' => $group],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function viewMyInvitations($page = 1){
+        $additionalData = ['page' => $page];
+        $messege =  'Invitation fetched successfully';
+        return $this->executeService($this->service_transformer, new Request(),$additionalData, $messege);
     }
-
-    public function kickFromGroup($group, $user) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "you kicked this user successfully";
-
-        return $this->service_transformer->execute(
-            ['group' => $group, 'user_id' => $user->id],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function viewGroupUsers($group, $page = 1){
+        $additionalData = ['group_id' => $group->id, 'page' => $page];
+        $messege =  "Group's users fetched successfully";
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
-
-    public function viewGroups($page=1) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'groups fetched successfully';
-        
-        return $this->service_transformer->execute(
-            ['page' => $page],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function exitGroup($group){
+        $additionalData = ['group' => $group];
+        $messege =   "You've exited the group successfully";
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
-    
-    public function viewMyGroups($page=1) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'your groups fetched successfully';
-        
-        return $this->service_transformer->execute(
-            ['page' => $page],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function kickFromGroup($group, $user){
+        $additionalData =  ['group' => $group, 'user_id' => $user->id];
+        $messege =  'User kicked from group successfully';
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
+    }
+    public function viewGroups($page = 1){
+        $additionalData = ['page' => $page];
+        $messege =   'Groups fetched successfully';
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
+    }
+    public function viewMyGroups($page = 1){
+        $additionalData = ['page' => $page];
+        $messege =   "your groups fetched successfully";
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
 }

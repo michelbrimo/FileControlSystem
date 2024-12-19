@@ -15,60 +15,19 @@ class UserController extends Controller
     function __construct(){
         $this->service_transformer = new ServiceTransfromer();
     }
-
-    public function register(Request $request) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'user created successfully';
-        
-        return $this->service_transformer->execute(
-            $request->all(),
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );
-    }
-
-    public function login(Request $request) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'user logged successfully';
-
-        return $this->service_transformer->execute(
-            $request->all(),
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );
-    }
-
-    public function myProfile() {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "user's profile has been fetched successfully";
-
-        return $this->service_transformer->execute(
-            ['id' => auth()->user()->id],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
-    }
     
-    public function viewUsers($page=1) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "users has been fetched successfully";
-
-        return $this->service_transformer->execute(
-            ['page' => $page],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function register(Request $request){
+        return $this->executeService($this->service_transformer, $request, [], 'User registered successfully');
+    }
+    public function login(Request $request){
+        return $this->executeService($this->service_transformer, $request, [], 'User logged in successfully');
+    }
+    public function myProfile(){
+        $additionalData = ['id' => auth()->user()->id];
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, "User's profile fetched successfully");
+    }
+    public function viewUsers($page = 1){
+        $additionalData = ['page' => $page];
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, 'Users fetched successfully');
     }
 }

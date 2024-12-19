@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Route;
+
 
 class Controller extends BaseController
 {
@@ -19,7 +21,25 @@ class Controller extends BaseController
         }else{
             return null;
         }
+    }
+    public function executeService($serviceTransformer, $request, $additionalData = [], $successMessage = '')
+    {
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $serviceFunction = $this->getRouteExploded($routeName);
 
+        if (!$serviceFunction) {
+            throw new \Exception("Invalid route name format. Ensure it contains service and function.");
+        }
 
-}
+        $requestData = array_merge($request->all(), $additionalData);
+
+        return $serviceTransformer->execute(
+            $requestData,
+            $serviceFunction['service'],
+            $serviceFunction['function'],
+            $successMessage
+        );
+    }
+    
 }

@@ -19,143 +19,68 @@ class FileController extends Controller
         $this->service_transformer = new ServiceTransfromer();
     }
     
-    function uploadFiles(Request $request, $group){
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = 'file uploaded successfully';
-
-        if(is_string($group)){
-            $request['group_name'] = $group;
-        }else{
-            $request['group_name'] = $group->name;
-        }
-        
-        return $this->service_transformer->execute(
-            $request->all(),
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function uploadFiles(Request $request, $group){
+        $groupName = is_string($group) ? $group : $group->name;
+        $additionalData = ['group_name' => $groupName];
+        $messege = 'File uploaded successfully';
+        return $this->executeService($this->service_transformer, $request, $additionalData, $messege);
     }
 
-    public function checkIn(Request $request, $group) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "you've checked-in the file(s) successfully";
-       
-        $request['group_id'] = $group->id;
-        return $this->service_transformer->execute(
-            $request->all(),
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function checkIn(Request $request, $group){
+        $additionalData = ['group_id' => $group->id];
+        $messege = "You've checked-in the file(s) successfully";
+        return $this->executeService($this->service_transformer, $request, $additionalData, $messege);
+    }
+
+    public function checkOut(Request $request, $group, $file_id){
+        $additionalData = ['group_id' => $group->id, 'file_id' => $file_id];
+        $messege =  "You've checked-out the file(s) successfully";
+        return $this->executeService($this->service_transformer, $request, $additionalData, $messege);
+    }
+
+    public function viewGroupFiles($group, $page = 1){
+        $additionalData = ['group_id' => $group->id, 'page' => $page];
+        $messege =  'Group files fetched successfully';
+        return $this->executeService($this->service_transformer, new Request(),$additionalData ,$messege );
     }
     
-    public function checkOut(Request $request, $group, $file_id) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "you've checked-in the file(s) successfully";
-
-        $request['file_id'] = $file_id;
-        $request['group_id'] = $group->id;
-
-        return $this->service_transformer->execute(
-            $request->all(),
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
-    }
-    
-    public function viewGroupFiles($group, $page=1) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "group files fetched successfully";
-
-        return $this->service_transformer->execute(
-            ['page'=> $page, 'group_id'=> $group->id],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
-    }
-    
-    public function viewGroupFileDetails($group, $file_id, $page=1) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "file details fetched successfully";
-
-
-        return $this->service_transformer->execute(
-            ['file_id'=> $file_id, 'page'=> $page],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function viewGroupFileDetails($group, $file_id, $page = 1){
+        $additionalData = ['file_id' => $file_id, 'page' => $page];
+        $messege =  'File details fetched successfully';
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
 
-    public function deleteFile($group, $file_id) {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "file deleted successfully";
-
-        return $this->service_transformer->execute(
-            ['file_id'=> $file_id, 'group'=>$group],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function deleteFile($group, $file_id){
+        $additionalData = ['group' => $group, 'file_id' => $file_id];
+        $messege =  'File deleted successfully';
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
 
-
-    public function compareFiles(Request $request)
-    {
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "You've compared the files successfully";
-
-        return $this->service_transformer->execute(
-            $request->all(),
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );    
+    public function compareFiles(Request $request){
+        $messege =  "You've compared the files successfully";
+        return $this->executeService($this->service_transformer, $request, [],$messege);
     }
 
     public function seeChanges($group, $file_id){
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "the changes is fetched successfully";
-
-        return $this->service_transformer->execute(
-            ['file_id'=> $file_id, 'group'=>$group],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );
+        $additionalData = ['group' => $group, 'file_id' => $file_id];
+        $messege =  "the changes is fetched successfully";
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
 
     public function seeUserChanges($group, $file_id, $user_id){
-        $currentRoute = Route::current();
-        $routeName = $currentRoute->getName();
-        $service_function = $this->getRouteExploded($routeName);
-        $success_message = "the changes is fetched successfully";
-
-        return $this->service_transformer->execute(
-            ['file_id'=> $file_id, 'group'=>$group, 'user_id'=>$user_id],
-            $service_function['service'],
-            $service_function['function'],
-            $success_message
-        );
+        $additionalData = ['file_id' => $file_id, 'group' => $group, 'user_id' => $user_id];
+        $messege =  "the changes is fetched successfully";
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
     
 }
+
+
+
+    
+
+    
+
+
+    
+
