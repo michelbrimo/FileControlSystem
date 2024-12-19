@@ -200,12 +200,13 @@ class FileServices
 
         $responseDataArray = $responseData->getData(true);
 
+        
         $differences = $responseDataArray['diffrence'] ;
-
+        
         if (empty($differences)){
             $differencesJson = "no Changes";
         }else{
-            $differencesJson = json_encode($differences);
+            $differencesJson = json_encode($differences, JSON_PRETTY_PRINT);
         }
 
         return $this->file_repository->createHistory([
@@ -268,6 +269,47 @@ class FileServices
         return $this->file_repository->viewFileDetails($data['file_id'], $data['page']);
     }
 
+    public function seeChanges($data){
+        $validator = Validator::make($data, [
+            'file_id' => 'integer|required', 
+            'group' => 'required', 
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(
+                $validator->errors()->first(),
+                422
+            );
+        }
+
+        if(!$this->file_repository->fileExists((int)$data['file_id'], $data['group']->id))
+            throw new Exception("file not found in this group", 400);
+         
+        $results = $this->file_repository->getChanges($data['file_id']);
+        return $results;
+    }
+    
+    public function seeUserChanges($data){
+        $validator = Validator::make($data, [
+            'file_id' => 'integer|required', 
+            'group' => 'required', 
+            'user_id' => 'integer|required'
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception(
+                $validator->errors()->first(),
+                422
+            );
+        }
+
+        if(!$this->file_repository->fileExists((int)$data['file_id'], $data['group']->id))
+            throw new Exception("file not found in this group", 400);
+         
+        $results = $this->file_repository->getUserChanges($data['file_id'], $data['user_id']);
+        return $results;
+    }
+
     public function compareFiles($data)
     {
         $validator = Validator::make($data, [
@@ -284,7 +326,6 @@ class FileServices
         $oldFilePath = $data['old_path'];
         $newFilePath = $data['new_path'];
 
-        // return $oldFilePath;
 
         if (!file_exists($oldFilePath) || !file_exists($newFilePath)) {
             return response()->json([

@@ -36,5 +36,8 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/{group_name}/check-out/{file_id}', [FileController::class, 'checkOut'])->name('Files.checkOut');
         Route::get('/{group_name}/view-files/{page?}', [FileController::class, 'viewGroupFiles'])->name('Files.viewGroupFiles');
         Route::get('/{group_name}/view-file-details/{file_id}/{page?}', [FileController::class, 'viewGroupFileDetails'])->name('Files.viewGroupFileDetails');
+        Route::get('/{group_name}/see-changes/{file_id}', [FileController::class, 'seeChanges'])->name('Files.seeChanges');
+        Route::get('/{group_name}/see-user-changes/{file_id}/{user_id}', [FileController::class, 'seeUserChanges'])->name('Files.seeUserChanges');
+
     });
 });

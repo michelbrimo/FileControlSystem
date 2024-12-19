@@ -25,6 +25,7 @@ class FileRepository{
         return FileCheck::where('file_id', '=', $file_id)
                         ->first();
     }
+
     
     public function createFile($data){  
         return File::create($data);
@@ -79,5 +80,15 @@ class FileRepository{
                       ->take($limit)
                       ->select(['id', 'user_id','link', 'description'])
                       ->get();
+    }
+    function getChanges($file_id) {
+        return History::where('file_id', '=', $file_id)
+                        ->get();
+    }
+
+    function getUserChanges($file_id, $user_id) {
+        return History::where('file_id', '=', $file_id)
+                        ->where('user_id', '=', $user_id)
+                        ->get();
     }
 }

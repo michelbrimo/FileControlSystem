@@ -129,5 +129,33 @@ class FileController extends Controller
             $success_message
         );    
     }
+
+    public function seeChanges($group, $file_id){
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "the changes is fetched successfully";
+
+        return $this->service_transformer->execute(
+            ['file_id'=> $file_id, 'group'=>$group],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );
+    }
+
+    public function seeUserChanges($group, $file_id, $user_id){
+        $currentRoute = Route::current();
+        $routeName = $currentRoute->getName();
+        $service_function = $this->getRouteExploded($routeName);
+        $success_message = "the changes is fetched successfully";
+
+        return $this->service_transformer->execute(
+            ['file_id'=> $file_id, 'group'=>$group, 'user_id'=>$user_id],
+            $service_function['service'],
+            $service_function['function'],
+            $success_message
+        );
+    }
     
 }

@@ -20,14 +20,16 @@ class ServiceTransfromer{
         'uploadFiles'=>['LoggingAspect', 'TransactionAspect'],
         'exitGroup' => [],
         'kickFromGroup' => [],
-        'checkIn' => ["TransactionAspect"],
-        'checkOut' => [],
+        'checkIn' => ["FileLoggingAspect", "TransactionAspect"],
+        'checkOut' => ["FileLoggingAspect"],
         'compareFiles'=>[],
         'viewGroups'=>[],
         "viewMyGroups"=>[],
         "viewGroupFiles" => [],
         "deleteFile" => [],
-        "viewGroupFileDetails" => []
+        "viewGroupFileDetails" => [],
+        "seeChanges" => [],
+        "seeUserChanges" => []
     ];
 
     private $service_mapper = [];
