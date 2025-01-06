@@ -12,7 +12,7 @@ class CreateGroupsAndSaveId extends Command
      *
      * @var string
      */
-    protected $signature = 'groups:create-groups-and-save-id {count=20}';
+    protected $signature = 'groups:create-groups-and-save-name {count=20}';
 
     /**
      * The console command description.
@@ -62,17 +62,13 @@ class CreateGroupsAndSaveId extends Command
             ])->post($url, ['name' => $name]);
 
             if ($response->successful()) {
-                $id = $response['data']['id'];
                 $name = $response['data']['name'];
-                $admin_id = $response['data']['admin_id'];
 
                 $groups_info[] = [
-                    'id' => $id,
                     'name' => $name,
-                    'admin_id' => $admin_id,
                 ];
 
-                $this->info("Group {$name} created and ID saved.");
+                $this->info("Group {$name} created and name saved.");
             } else {
                 $this->error("Failed to create group {$name}: {$response->body()}");
             }
@@ -85,10 +81,10 @@ class CreateGroupsAndSaveId extends Command
         }
 
         $csvFile = fopen($csvFilePath, 'w');
-        fputcsv($csvFile, ['id', 'name', 'admin_id']); // CSV header
+        fputcsv($csvFile, ['name']); // CSV header
 
         foreach ($groups_info as $group_info) {
-            fputcsv($csvFile, [$group_info['id'], $group_info['name'], $group_info['admin_id']]);
+            fputcsv($csvFile, [$group_info['name']]);
         }
 
         fclose($csvFile);
