@@ -45,13 +45,19 @@ class GroupRepository{
     public function getGroupUsers_byName($group_id, $page) {
         $limit = 10;
         $offset = ($page - 1) * $limit;
-        return UserGroup::where('group_id', '=', $group_id)
+        $users = UserGroup::where('group_id', '=', $group_id)
                         ->join('users', 'user_groups.user_id', '=', 'users.id') 
                         ->skip($offset)
                         ->take($limit)
                         ->select('users.id', 'users.username') 
                         ->get()
                         ->toArray();
+        $admin = Group::where('id', '=', $group_id)
+                ->with(['admin:id,username'])
+                ->select('admin_id')
+                ->get();
+
+        return ['users' => $users, 'admin' => $admin];
     }
 
     public function getGroups($page,){
