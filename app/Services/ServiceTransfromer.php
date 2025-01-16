@@ -29,7 +29,8 @@ class ServiceTransfromer{
         "deleteFile" => [],
         "viewGroupFileDetails" => [],
         "seeChanges" => [],
-        "seeUserChanges" => []
+        "seeUserChanges" => [],
+        "viewFileDetailContent" => []
     ];
 
     private $service_mapper = [];

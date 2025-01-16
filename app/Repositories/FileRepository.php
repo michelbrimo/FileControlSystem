@@ -89,6 +89,12 @@ class FileRepository{
                       ->select(['id', 'user_id','link', 'description'])
                       ->get();
     }
+
+    function getHistory($id) {
+        return History::where('id', '=', $id)
+                      ->first();
+    }
+
     function getChanges($file_id) {
         return History::where('file_id', '=', $file_id)
                         ->get();

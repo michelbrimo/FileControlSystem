@@ -25,7 +25,6 @@ return new class extends Migration
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
             $table->string('description')->default("");
-            $table->text('diffrence')->default("the first version");
             $table->timestamps();
         });
     }

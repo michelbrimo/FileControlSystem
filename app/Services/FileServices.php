@@ -56,9 +56,9 @@ class FileServices
         $uniqueFileName = $nameWithoutExtension . '_' . $data['group_id'];
     
        
-        if ($this->file_repository->fileExists_byName($fileName, $data['group_id'])) {
-            throw new Exception($uniqueFileName . " already exists in your group.", 400);
-        }
+        // if ($this->file_repository->fileExists_byName($fileName, $data['group_id'])) {
+        //     throw new Exception($uniqueFileName . " already exists in your group.", 400);
+        // }
     
         $storagePath = 'files/' . $uniqueFileName . '/' . $nameWithoutExtension . "_original." . $fileExtension;
         $fileContents = file_get_contents($originalFilePath);
@@ -66,7 +66,7 @@ class FileServices
         $file = $this->file_repository->createFile([
             'state' => 0,
             'file_name' => $fileName,
-            'file_path' => 'storage/'.$storagePath,
+            'file_path' => $storagePath,
             'group_id' => $data['group_id'],
             'owner_id' => auth()->user()->id,
             'versions' => 1
@@ -82,6 +82,8 @@ class FileServices
         $group = $this->group_repository->getGroup_byId($data['group_id']);
         $this->group_repository->updateGroup($group->id, ['numberOfFiles' => $group->numberOfFiles + 1]);
     
+        // Storage::disk('public')->put($storagePath, $originalFilePath);
+
         Storage::disk('public')->put($storagePath, $fileContents);
             return [
             'file' => $file,
@@ -118,7 +120,7 @@ class FileServices
             
             $results[] = $this->file_repository->createCheck([
                 'user_id' => auth()->user()->id,
-                'file_id' => $file_id
+                'file_id' => $file_id,
             ]);
         }
 
@@ -140,10 +142,7 @@ class FileServices
             );
         }
 
-        
-
         $file = $this->file_repository->getFile_byId($data['file_id']);
-
         
         $oldFilePath = $file->file_path;
         $relativeOldPath = str_replace('storage/files', 'public/files', $oldFilePath);
@@ -179,7 +178,7 @@ class FileServices
 
         $this->file_repository->updateFile($data['file_id'], [
             'state' => 0,
-            'file_path' => 'storage/'.$storagePath,
+            'file_path' => $storagePath,
             'versions' => $file->versions +1
         ]);
 
@@ -187,34 +186,33 @@ class FileServices
             'check_id' => $check_in->id,
         ]);
 
-        $relativeNewPath = str_replace('files', 'public/files', $storagePath);
-        $fullNewFilePath = Storage::path($relativeNewPath);
-        $fullNewFilePath = str_replace('/', '\\', $fullNewFilePath);
+        // $relativeNewPath = str_replace('files', 'public/files', $storagePath);
+        // $fullNewFilePath = Storage::path($relativeNewPath);
+        // $fullNewFilePath = str_replace('/', '\\', $fullNewFilePath);
 
-        $fileToCompare = [
-            'old_path' => $fullOldFilePath, 
-            'new_path' => $fullNewFilePath
-        ];
+        // $fileToCompare = [
+        //     'old_path' => $fullOldFilePath, 
+        //     'new_path' => $fullNewFilePath
+        // ];
 
-        $responseData = $this->compareFiles($fileToCompare);
+        // $responseData = $this->compareFiles($fileToCompare);
 
-        $responseDataArray = $responseData->getData(true);
+        // $responseDataArray = $responseData->getData(true);
 
         
-        $differences = $responseDataArray['diffrence'] ;
+        // $differences = $responseDataArray['diffrence'] ;
         
-        if (empty($differences)){
-            $differencesJson = "no Changes";
-        }else{
-            $differencesJson = json_encode($differences, JSON_PRETTY_PRINT);
-        }
+        // if (empty($differences)){
+        //     $differencesJson = "no Changes";
+        // }else{
+        //     $differencesJson = json_encode($differences, JSON_PRETTY_PRINT);
+        // }
 
         return $this->file_repository->createHistory([
             'link' => $storagePath,
             'user_id' => auth()->user()->id,
             'file_id' => $data['file_id'],
             'description' => $data['description'],
-            'diffrence' => $differencesJson
         ]); 
     }
     
@@ -269,10 +267,9 @@ class FileServices
         return $this->file_repository->viewFileDetails($data['file_id'], $data['page']);
     }
 
-    public function seeChanges($data){
+    public function viewFileDetailContent($data) {
         $validator = Validator::make($data, [
-            'file_id' => 'integer|required', 
-            'group' => 'required', 
+            'file_detail_id' => 'integer|required', 
         ]);
 
         if ($validator->fails()) {
@@ -281,13 +278,32 @@ class FileServices
                 422
             );
         }
+        $file_content = $this->file_repository->getHistory($data['file_detail_id']);
+        $path = $file_content->link;
+        $content =  Storage::disk('public')->get($path);
 
-        if(!$this->file_repository->fileExists((int)$data['file_id'], $data['group']->id))
-            throw new Exception("file not found in this group", 400);
-         
-        $results = $this->file_repository->getChanges($data['file_id']);
-        return $results;
+        return ["content" => $content];
     }
+
+    // public function seeChanges($data){
+    //     $validator = Validator::make($data, [
+    //         'file_id' => 'integer|required', 
+    //         'group' => 'required', 
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         throw new Exception(
+    //             $validator->errors()->first(),
+    //             422
+    //         );
+    //     }
+
+    //     if(!$this->file_repository->fileExists((int)$data['file_id'], $data['group']->id))
+    //         throw new Exception("file not found in this group", 400);
+         
+    //     $results = $this->file_repository->getChanges($data['file_id']);
+    //     return $results;
+    // }
     
     public function seeUserChanges($data){
         $validator = Validator::make($data, [
@@ -313,8 +329,8 @@ class FileServices
     public function compareFiles($data)
     {
         $validator = Validator::make($data, [
-            'old_path' => 'required|string', 
-            'new_path' => 'required|string',
+            'first_id' => 'required|integer', 
+            'second_id' => 'required|integer',
         ]);
 
         if ($validator->fails()) {
@@ -323,19 +339,15 @@ class FileServices
             ], 422);
         }
 
-        $oldFilePath = $data['old_path'];
-        $newFilePath = $data['new_path'];
+        $temp_file1_link = $this->file_repository->getHistory($data['first_id'])->link;
+        $temp_file2_link = $this->file_repository->getHistory($data['second_id'])->link;
 
 
-        if (!file_exists($oldFilePath) || !file_exists($newFilePath)) {
-            return response()->json([
-                'success' => false,
-                'message' => "One or both files do not exist."
-            ], 400);
-        }
+        $file1_link = base_path()."/storage/app/public/".$temp_file1_link;
+        $file2_link = base_path()."/storage/app/public/".$temp_file2_link;
 
-        $oldLines = file($oldFilePath, FILE_IGNORE_NEW_LINES);
-        $newLines = file($newFilePath, FILE_IGNORE_NEW_LINES);
+        $oldLines = file($file1_link, FILE_IGNORE_NEW_LINES);
+        $newLines = file($file2_link, FILE_IGNORE_NEW_LINES);
 
         $diffrence = [];
         $maxLines = max(count($oldLines), count($newLines));

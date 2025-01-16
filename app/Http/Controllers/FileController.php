@@ -8,8 +8,7 @@ use App\Services\ServiceTransfromer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use App\Services\FileServices;
-
-
+use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
@@ -31,7 +30,12 @@ class FileController extends Controller
         $messege = "You've checked-in the file(s) successfully";
         return $this->executeService($this->service_transformer, $request, $additionalData, $messege);
     }
-
+    
+    public function download(Request $request, $group){
+        $file = File::where('id', $request->file_id)->first();
+        return Storage::download('public/'.$file->file_path);
+    }
+    
     public function checkOut(Request $request, $group, $file_id){
         $additionalData = ['group_id' => $group->id, 'file_id' => $file_id];
         $messege =  "You've checked-out the file(s) successfully";
@@ -47,6 +51,12 @@ class FileController extends Controller
     public function viewGroupFileDetails($group, $file_id, $page = 1){
         $additionalData = ['file_id' => $file_id, 'page' => $page];
         $messege =  'File details fetched successfully';
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
+    }
+    
+    public function viewFileDetailContent($group, $file_detail_id){
+        $additionalData = ['file_detail_id' => $file_detail_id];
+        $messege =  'File detail content fetched successfully';
         return $this->executeService($this->service_transformer, new Request(), $additionalData, $messege);
     }
 

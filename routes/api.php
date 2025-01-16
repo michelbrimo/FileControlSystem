@@ -8,7 +8,6 @@ use App\Http\Controllers\GroupController;
 
 Route::post('/register', [UserController::class, 'register'])->name('Users.createUser');
 Route::post('/login', [UserController::class, 'login'])->name('Users.login');
-Route::get('/compare-files',[FileController::class,'compareFiles'])->name('Files.compareFiles');
 
 
 Route::middleware('auth:sanctum')->group(function(){
@@ -33,11 +32,17 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/{group_name}/upload-file', [FileController::class, 'uploadFiles'])->name('Files.uploadFiles');
         Route::get('/{group_name}/exit-group', [GroupController::class, 'exitGroup'])->name( 'Groups.exitGroup');
         Route::post('/{group_name}/check-in', [FileController::class, 'checkIn'])->name('Files.checkIn');
+        Route::post('/{group_name}/download', [FileController::class, 'download'])->name('Files.download');
         Route::post('/{group_name}/check-out/{file_id}', [FileController::class, 'checkOut'])->name('Files.checkOut');
         Route::get('/{group_name}/view-files/{page?}', [FileController::class, 'viewGroupFiles'])->name('Files.viewGroupFiles');
         Route::get('/{group_name}/view-file-details/{file_id}/{page?}', [FileController::class, 'viewGroupFileDetails'])->name('Files.viewGroupFileDetails');
+        Route::get('/{group_name}/view-file-detail-content/{file_detail_id}', [FileController::class, 'viewFileDetailContent'])->name('Files.viewFileDetailContent');
         Route::get('/{group_name}/see-changes/{file_id}', [FileController::class, 'seeChanges'])->name('Files.seeChanges');
         Route::get('/{group_name}/see-user-changes/{file_id}/{user_id}', [FileController::class, 'seeUserChanges'])->name('Files.seeUserChanges');
+        Route::post('/{group_name}/compare-files',[FileController::class,'compareFiles'])->name('Files.compareFiles');
 
     });
 });
+
+# test api to download file
+
