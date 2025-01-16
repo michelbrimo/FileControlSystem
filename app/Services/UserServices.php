@@ -17,6 +17,7 @@ class UserServices
         $this->user_repository = new UserRepository();
     }
 
+
     public function createUser($data){
         $validator = Validator::make($data, [
             'username' => 'unique:users|string|required',
@@ -34,6 +35,24 @@ class UserServices
         $result['token'] = $result->createToken('personal access token')->plainTextToken;
             
         return $result;
+    }
+    
+    public function tracing($data){
+        $validator = Validator::make($data, [
+            'user_id' => 'integer|required',
+            'page' => 'integer', 
+        ]);
+
+        if($validator->fails()){
+            throw new Exception(
+                $validator->errors()->first(),
+                422);
+        }  
+
+        $user = $this->user_repository->getUser_byId($data['user_id']);
+        $trace = $this->user_repository->getLog($data['user_id'], $data['page']);
+            
+        return ['user' => $user->username, 'actions' => $trace];
     }
 
     public function login($data) {

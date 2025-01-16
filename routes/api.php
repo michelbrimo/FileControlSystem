@@ -40,7 +40,10 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::get('/{group_name}/see-changes/{file_id}', [FileController::class, 'seeChanges'])->name('Files.seeChanges');
         Route::get('/{group_name}/see-user-changes/{file_id}/{user_id}', [FileController::class, 'seeUserChanges'])->name('Files.seeUserChanges');
         Route::post('/{group_name}/compare-files',[FileController::class,'compareFiles'])->name('Files.compareFiles');
+    });
 
+    Route::middleware('Admin')->group(function(){
+        Route::get('/tracing/{user_id}/{page?}', [UserController::class, 'tracing'])->name('Users.tracing');
     });
 });
 

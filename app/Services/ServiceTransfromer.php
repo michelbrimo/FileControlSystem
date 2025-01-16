@@ -7,8 +7,8 @@ use Exception;
 class ServiceTransfromer{
 
     public $aspect_mapper = [
-        'createUser' => ['LoggingAspect'],
-        'login' => [],
+        'createUser' => [],
+        'login' => ['LoggingAspect'],
         'getUserProfile' => [],
         'viewUsers' => [],
         'viewGroupUsers' => [],
@@ -18,19 +18,20 @@ class ServiceTransfromer{
         'viewMyInvitations' => [],
         'createGroup' => ['LoggingAspect'],
         'uploadFiles'=>['LoggingAspect', 'TransactionAspect'],
-        'exitGroup' => [],
-        'kickFromGroup' => [],
-        'checkIn' => ["FileLoggingAspect", "TransactionAspect"],
-        'checkOut' => ["FileLoggingAspect"],
+        'exitGroup' => ['LoggingAspect'],
+        'kickFromGroup' => ['LoggingAspect'],
+        'checkIn' => ["FileLoggingAspect", "TransactionAspect", 'LoggingAspect'],
+        'checkOut' => ["FileLoggingAspect", 'LoggingAspect'],
         'compareFiles'=>[],
         'viewGroups'=>[],
         "viewMyGroups"=>[],
         "viewGroupFiles" => [],
-        "deleteFile" => [],
+        "deleteFile" => ['LoggingAspect'],
         "viewGroupFileDetails" => [],
         "seeChanges" => [],
         "seeUserChanges" => [],
-        "viewFileDetailContent" => []
+        "viewFileDetailContent" => [],
+        'tracing' => []
     ];
 
     private $service_mapper = [];

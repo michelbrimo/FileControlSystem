@@ -30,4 +30,9 @@ class UserController extends Controller
         $additionalData = ['page' => $page];
         return $this->executeService($this->service_transformer, new Request(), $additionalData, 'Users fetched successfully');
     }
+    public function tracing($user_id, $page = 1){
+        $additionalData = ['page' => $page, 'user_id' => $user_id];
+        return $this->executeService($this->service_transformer, new Request(), $additionalData, 'User traced successfully');
+    }
+
 }
